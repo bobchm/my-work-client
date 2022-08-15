@@ -6,13 +6,13 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function WorkingInput(props) {
     return (
-        <form onSubmit={props.addItem}>
+        <form className="workingInputForm" onSubmit={props.addItem}>
             <Stack
+                className="workingInputContainer"
                 direction="row"
                 alignItems="center"
-                justifyContent="center"
+                justifyContent="space-between"
                 spacing={2}
-                sx={{ width: "100%" }}
             >
                 <TextField
                     variant="outlined"
@@ -23,7 +23,7 @@ export default function WorkingInput(props) {
                         boxShadow: 2,
                         borderColor: "background.paper",
                         borderRadius: "10px",
-                        width: "300px",
+                        width: "85%",
                     }}
                 />
                 <Button

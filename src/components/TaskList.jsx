@@ -18,7 +18,7 @@ export default function TaskList(props) {
                 overflow: "auto",
                 width: "100%",
                 minWidth: 400,
-                maxWidth: 600,
+                // maxWidth: 600,
                 minHeight: 400,
                 maxHeight: 400,
                 bgcolor: "background.paper",

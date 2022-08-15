@@ -321,7 +321,7 @@ export default function MyWork() {
 
     // render
     return (
-        <div>
+        <div className="outerDiv">
             <WorkAppBar
                 settingsCallback={menuSettingsCallback}
                 completed={completed}
@@ -390,6 +390,7 @@ export default function MyWork() {
                     onEdit={handleEdit}
                     showDates={isMixingDates()}
                     warnOnLate={!completed}
+                    sx={{ width: "100%" }}
                 />
                 <FormControlLabel
                     control={

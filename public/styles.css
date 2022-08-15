@@ -16,7 +16,6 @@ body {
     width: 100%;
     height: auto;
     min-height: 380px;
-    max-width: 800px;
     min-width: 250px;
     background: #f2f6f8;
     background-size: 25px 25px;
@@ -51,4 +50,16 @@ body {
   font-family: 'Roboto', Arial, Helvetica, sans-serif;
   margin-bottom: 10px;
   width: 250px;
+}
+
+.outerDiv {
+  width: 500px;
+}
+
+.workingInputContainer {
+  width: inherit;
+}
+
+.workingInputForm {
+  width: inherit;
 }
