@@ -6,14 +6,20 @@ import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
-import { addDays, getToday, compareDates } from "../dates";
+import { addDays, getToday, compareDates } from "../utils/dates";
+import {
+    addTaskToDB,
+    deleteTaskFromDB,
+    changeTaskInDB,
+    deleteTaskFromDBQuery,
+} from "../utils/dbaccess";
 import {
     getNoRecurrence,
     isRecurrence,
     updateForRecurrence,
-} from "../recurrences";
-import { getCookie, setCookie } from "../cookies";
-import taskURL from "../taskURL";
+} from "../utils/recurrences";
+import { getCookie, setCookie } from "../utils/cookies";
+import taskURL from "../utils/taskURL";
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
@@ -36,7 +42,6 @@ export default function MyWork() {
 
     // This fetches the tasks from the database.
     useEffect(() => {
-        console.log("useEffect#1");
         saveDisplayContext();
         updateTaskLists();
         updateTasks();
@@ -75,14 +80,11 @@ export default function MyWork() {
         const response = await fetch(taskURL("task/" + getParams()));
 
         if (!response.ok) {
-            const message = `An error occured: ${response.statusText}`;
-            window.alert(message);
+            console.log(`An error occured: ${response.statusText}`);
             return;
         }
 
         const tasks = await response.json();
-        console.log("ut-len: ", tasks.length);
-        console.log(tasks);
         tasks.map((task) => (task.checked = false));
         sortAndSetTasks(tasks);
     }
@@ -92,8 +94,7 @@ export default function MyWork() {
         const response = await fetch(taskURL("taskLists/"));
 
         if (!response.ok) {
-            const message = `An error occured: ${response.statusText}`;
-            window.alert(message);
+            console.log(`An error occured: ${response.statusText}`);
             return;
         }
 
@@ -160,7 +161,7 @@ export default function MyWork() {
     }
 
     // they toggled one of the task checkboxes - enable/disable relevant buttons
-    function doCheckboxToggle(event, id) {
+    function handleCheckboxToggle(event, id) {
         var any = event.target.checked;
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i]._id === id) {
@@ -170,73 +171,6 @@ export default function MyWork() {
             }
         }
         setAnySelected(any);
-    }
-
-    // add task to the database
-    async function addTaskToDB(task) {
-        await fetch(taskURL("task/add"), {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(task),
-        }).catch((error) => {
-            window.alert(error);
-            return;
-        });
-    }
-
-    // delete a task from MongoDB based on id
-    async function deleteTask(id) {
-        await fetch(taskURL(`${id}`), {
-            method: "DELETE",
-        });
-    }
-
-    // delete a task from MongoDB based on description
-    async function deleteTaskFromQuery(qry) {
-        var qry_S = "?" + new URLSearchParams(qry);
-        const response = await fetch(taskURL("task/" + qry_S));
-
-        if (!response.ok) {
-            console.log(`An error occured: ${response.statusText}`);
-            return;
-        }
-
-        const tasks = await response.json();
-        if (tasks && tasks.length > 0) {
-            await deleteTask(tasks[0]._id);
-        }
-    }
-
-    // handler for the task completion button
-    async function changeTask(id, key, value) {
-        // get the task from the database
-        const id_s = id.toString();
-        const response = await fetch(taskURL(`task/${id_s}`));
-
-        if (!response.ok) {
-            console.log(`An error has occured: ${response.statusText}`);
-            return;
-        }
-
-        const task = await response.json();
-        if (!task) {
-            console.log(`Task with id ${id_s} not found`);
-            return;
-        }
-
-        // mark as complete
-        var newTask = { ...task, [key]: value };
-
-        // save back to database
-        await fetch(taskURL(`update/${id_s}`), {
-            method: "POST",
-            body: JSON.stringify(newTask),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
     }
 
     // jump to the edit dialog page to edit a task
@@ -277,7 +211,7 @@ export default function MyWork() {
         for (var i = 0; i < tasks.length; i++) {
             var task = tasks[i];
             if (task.checked) {
-                await deleteTask(task._id);
+                await deleteTaskFromDB(task._id);
                 count += 1;
             }
         }
@@ -315,30 +249,25 @@ export default function MyWork() {
                 due: updateForRecurrence(task.due, task.recurrence),
                 recurrence: task.recurrence,
             };
-            await deleteTaskFromQuery(qry);
+            await deleteTaskFromDBQuery(qry);
         }
     }
 
     async function doToggleComplete() {
         var resetTasks = false;
         var count = tasks.length;
-        console.log(tasks);
 
         for (var i = 0; i < tasks.length; i++) {
             var task = tasks[i];
             if (task.checked) {
-                console.log("checked task: ", task);
                 // toggle completion in the DB
-                await changeTask(task._id, "completed", !task.completed);
+                await changeTaskInDB(task._id, "completed", !task.completed);
 
-                console.log("checked task (after): ", task);
                 // if we're completing (or uncompleting) a recurring task, that need special handling
                 if (isRecurrence(task.recurrence)) {
-                    console.log("in recurrence");
                     await handleRecurrence(task);
                     resetTasks = true;
                 } else {
-                    console.log("in not recurrence");
                     count -= 1;
                 }
             }
@@ -346,10 +275,8 @@ export default function MyWork() {
 
         setAnySelected(false);
         if (resetTasks) {
-            console.log("resetTasks");
             setNumTasks(0);
         } else {
-            console.log("set to zero");
             setNumTasks(count);
         }
     }
@@ -365,7 +292,7 @@ export default function MyWork() {
             var task = tasks[i];
             if (task.checked) {
                 isAny = true;
-                await changeTask(task._id, "due", addDays(task.due, 1));
+                await changeTaskInDB(task._id, "due", addDays(task.due, 1));
             }
         }
 
@@ -417,7 +344,7 @@ export default function MyWork() {
                 />
                 <TaskList
                     tasks={tasks}
-                    onChecked={doCheckboxToggle}
+                    onChecked={handleCheckboxToggle}
                     allowEdit={!completed}
                     onEdit={handleEdit}
                     showDates={isMixingDates()}

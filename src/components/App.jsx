@@ -5,17 +5,17 @@ import { Route, Routes } from "react-router-dom";
 
 // We import all the components we need in our app
 import MyWork from "./MyWork";
-import Edit from "./Edit";
+import Edit from "../routes/Edit";
 
 const App = () => {
-  return (
-    <div>
-      <Routes>
-        <Route exact path="/" element={<MyWork />} />
-        <Route path="/edit/:id" element={<Edit />} />
-      </Routes>
-    </div>
-  );
+    return (
+        <div>
+            <Routes>
+                <Route exact path="/" element={<MyWork />} />
+                <Route path="/edit/:id" element={<Edit />} />
+            </Routes>
+        </div>
+    );
 };
 
 export default App;
