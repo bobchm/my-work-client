@@ -62,7 +62,7 @@ body {
 
 @media screen and (min-width: 600px) {
   .outerDiv {
-    width: 500px;
+    width: 100vw;
   }
 }
 
