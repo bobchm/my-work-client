@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
@@ -311,6 +315,7 @@ export default function MyWork() {
             setCompleted(settings.completed);
             setDue(settings.due);
             setTaskList(settings.taskList);
+            console.log("Task List: ", settings.taskList);
         }
     }
 
@@ -329,13 +334,49 @@ export default function MyWork() {
                 direction="column"
                 alignItems="flex-start"
                 justifyContent="flex-start"
-                spacing={2}
+                spacing={1}
             >
-                <SettingsDisplay
+                <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    justifyContent="center"
+                    //spacing={2}
+                    sx={{ width: "100%" }}
+                >
+                    <Autocomplete
+                        disablePortal
+                        disableClearable
+                        fullWidth
+                        sx={{ padding: "5px" }}
+                        value={due}
+                        onChange={(event, newValue) => setDue(newValue)}
+                        options={["All", "Today", "Tomorrow"]}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Day" />
+                        )}
+                    />
+                    <Autocomplete
+                        disablePortal
+                        disableClearable
+                        fullWidth
+                        sx={{ padding: "5px" }}
+                        value={
+                            taskList && taskList.length > 0 ? taskList : "All"
+                        }
+                        onChange={(event, newValue) =>
+                            setTaskList(newValue === "All" ? "" : newValue)
+                        }
+                        options={[...taskLists, "All"]}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Task List" />
+                        )}
+                    />
+                </Stack>
+                {/* <SettingsDisplay
                     completed={completed}
                     due={due}
                     taskList={taskList}
-                />
+                /> */}
                 <WorkInput
                     addItem={handleAddTask}
                     handleChange={handleChange}
@@ -349,6 +390,17 @@ export default function MyWork() {
                     onEdit={handleEdit}
                     showDates={isMixingDates()}
                     warnOnLate={!completed}
+                />
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={completed}
+                            onChange={(event) =>
+                                setCompleted(event.target.checked)
+                            }
+                        />
+                    }
+                    label="Completed"
                 />
                 <ActionRow
                     onDelete={handleDelete}
