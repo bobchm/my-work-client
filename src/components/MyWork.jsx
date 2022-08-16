@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { deviceDetect, mobileModel, isMobile } from "react-device-detect";
+import { deviceDetect, mobileModel, isMobileOnly } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -48,7 +48,7 @@ export default function MyWork() {
 
     useEffect(() => {
         console.log("deviceDetect: ", deviceDetect());
-        console.log("mobile: ", isMobile ? true : false);
+        console.log("mobile: ", isMobileOnly ? true : false);
         console.log("browserName: ", mobileModel);
         console.log("innerWidth: ", window.innerWidth);
         console.log("innerHeight: ", window.innerHeight);
@@ -331,7 +331,7 @@ export default function MyWork() {
 
     var dev = deviceDetect();
     const title = `${dev.osName} ${dev.browserName} ${
-        !isMobile && "not"
+        !isMobileOnly && "not"
     } Mobile (${window.innerWidth}X${window.innerHeight})`;
 
     // render
