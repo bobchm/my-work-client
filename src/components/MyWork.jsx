@@ -1,4 +1,5 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
+import { deviceDetect, mobileModel, isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -44,6 +45,14 @@ export default function MyWork() {
     const [taskLists, setTaskLists] = useState([]);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log("deviceDetect: ", deviceDetect());
+        console.log("mobile: ", isMobile ? true : false);
+        console.log("browserName: ", mobileModel);
+        console.log("innerWidth: ", window.innerWidth);
+        console.log("innerHeight: ", window.innerHeight);
+    }, []);
 
     // This fetches the tasks from the database.
     useEffect(() => {
@@ -320,6 +329,11 @@ export default function MyWork() {
         }
     }
 
+    var dev = deviceDetect();
+    const title = `${dev.osName} ${dev.browserName} ${
+        !isMobile && "not"
+    } Mobile (${window.innerWidth}X${window.innerHeight})`;
+
     // render
     return (
         <Container
@@ -336,6 +350,7 @@ export default function MyWork() {
                 due={due}
                 taskList={taskList}
                 taskLists={taskLists}
+                title={title}
             />
             <Stack
                 className="container"
