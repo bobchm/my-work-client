@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import AppBar from "@mui/material/AppBar";
@@ -126,7 +127,13 @@ export default function Edit() {
 
     // This following section will display the form that takes input from the user to update the data.
     return (
-        <div>
+        <Container
+            sx={{
+                width: "80vw",
+                height: "80vh",
+                marginTop: "2vh",
+            }}
+        >
             <Box sx={{ flexGrow: 1, borderRadius: "10px" }}>
                 <AppBar
                     position="static"
@@ -174,7 +181,9 @@ export default function Edit() {
                         value={form.note}
                         onChange={(e) => updateForm({ note: e.target.value })}
                         label={"Note"}
+                        multiline
                         fullWidth
+                        rows={3}
                     />
                     <Autocomplete
                         value={form.recurrence}
@@ -216,6 +225,6 @@ export default function Edit() {
                     </Stack>
                 </Stack>
             </Paper>
-        </div>
+        </Container>
     );
 }

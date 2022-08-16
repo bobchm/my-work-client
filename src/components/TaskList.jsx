@@ -17,10 +17,6 @@ export default function TaskList(props) {
             sx={{
                 overflow: "auto",
                 width: "100%",
-                // minWidth: 400,
-                // maxWidth: 600,
-                // minHeight: 400,
-                // maxHeight: 400,
                 height: "100%",
                 bgcolor: "background.paper",
                 fontSize: "14px",

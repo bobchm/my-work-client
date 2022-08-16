@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-    deviceDetect,
-    mobileModel,
-    isMobileOnly,
-    isMobile,
-} from "react-device-detect";
+import { isMobileOnly } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -50,14 +45,6 @@ export default function MyWork() {
     const [taskLists, setTaskLists] = useState([]);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log("deviceDetect: ", deviceDetect());
-        console.log("mobile: ", isMobileOnly ? true : false);
-        console.log("browserName: ", mobileModel);
-        console.log("innerWidth: ", window.innerWidth);
-        console.log("innerHeight: ", window.innerHeight);
-    }, []);
 
     // This fetches the tasks from the database.
     useEffect(() => {
@@ -334,11 +321,6 @@ export default function MyWork() {
         }
     }
 
-    var dev = deviceDetect();
-    const title = `${dev.osName} ${dev.browserName} ${
-        !isMobileOnly && "not"
-    } Mobile (${window.innerWidth}X${window.innerHeight})`;
-
     // render
     return (
         <Container
@@ -355,7 +337,7 @@ export default function MyWork() {
                 due={due}
                 taskList={taskList}
                 taskLists={taskLists}
-                title={title}
+                title="My Work"
             />
             <Stack
                 className="container"
@@ -369,7 +351,6 @@ export default function MyWork() {
                         direction="row"
                         alignItems="flex-start"
                         justifyContent="center"
-                        //spacing={2}
                         sx={{ width: "100%" }}
                     >
                         <Autocomplete
