@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { deviceDetect, mobileModel, isMobileOnly } from "react-device-detect";
+import {
+    deviceDetect,
+    mobileModel,
+    isMobileOnly,
+    isMobile,
+} from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -359,47 +364,53 @@ export default function MyWork() {
                 justifyContent="flex-start"
                 spacing={1}
             >
-                <Stack
-                    direction="row"
-                    alignItems="flex-start"
-                    justifyContent="center"
-                    //spacing={2}
-                    sx={{ width: "100%" }}
-                >
-                    <Autocomplete
-                        disablePortal
-                        disableClearable
-                        fullWidth
-                        sx={{ padding: "5px" }}
-                        value={due}
-                        onChange={(event, newValue) => setDue(newValue)}
-                        options={["All", "Today", "Tomorrow"]}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Day" />
-                        )}
+                {!isMobileOnly && (
+                    <Stack
+                        direction="row"
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        //spacing={2}
+                        sx={{ width: "100%" }}
+                    >
+                        <Autocomplete
+                            disablePortal
+                            disableClearable
+                            fullWidth
+                            sx={{ padding: "5px" }}
+                            value={due}
+                            onChange={(event, newValue) => setDue(newValue)}
+                            options={["All", "Today", "Tomorrow"]}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Day" />
+                            )}
+                        />
+                        <Autocomplete
+                            disablePortal
+                            disableClearable
+                            fullWidth
+                            sx={{ padding: "5px" }}
+                            value={
+                                taskList && taskList.length > 0
+                                    ? taskList
+                                    : "All"
+                            }
+                            onChange={(event, newValue) =>
+                                setTaskList(newValue === "All" ? "" : newValue)
+                            }
+                            options={[...taskLists, "All"]}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Task List" />
+                            )}
+                        />
+                    </Stack>
+                )}
+                {isMobileOnly && (
+                    <SettingsDisplay
+                        completed={completed}
+                        due={due}
+                        taskList={taskList}
                     />
-                    <Autocomplete
-                        disablePortal
-                        disableClearable
-                        fullWidth
-                        sx={{ padding: "5px" }}
-                        value={
-                            taskList && taskList.length > 0 ? taskList : "All"
-                        }
-                        onChange={(event, newValue) =>
-                            setTaskList(newValue === "All" ? "" : newValue)
-                        }
-                        options={[...taskLists, "All"]}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Task List" />
-                        )}
-                    />
-                </Stack>
-                {/* <SettingsDisplay
-                    completed={completed}
-                    due={due}
-                    taskList={taskList}
-                /> */}
+                )}
                 <WorkInput
                     addItem={handleAddTask}
                     handleChange={handleChange}
@@ -415,17 +426,19 @@ export default function MyWork() {
                     warnOnLate={!completed}
                     sx={{ width: "100%", height: "800px" }}
                 />
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={completed}
-                            onChange={(event) =>
-                                setCompleted(event.target.checked)
-                            }
-                        />
-                    }
-                    label="Completed"
-                />
+                {!isMobileOnly && (
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={completed}
+                                onChange={(event) =>
+                                    setCompleted(event.target.checked)
+                                }
+                            />
+                        }
+                        label="Completed"
+                    />
+                )}
                 <ActionRow
                     onDelete={handleDelete}
                     onToggleComplete={handleToggleComplete}
