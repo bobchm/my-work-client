@@ -23,7 +23,7 @@ export default function WorkingInput(props) {
                         boxShadow: 2,
                         borderColor: "background.paper",
                         borderRadius: "10px",
-                        width: "85%",
+                        width: "100%",
                     }}
                 />
                 <Button

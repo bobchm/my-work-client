@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import WorkAppBar from "./WorkAppBar";
@@ -321,7 +322,14 @@ export default function MyWork() {
 
     // render
     return (
-        <div className="outerDiv">
+        <Container
+            className="outerDiv"
+            sx={{
+                width: "80vw",
+                height: "80vh",
+                marginTop: "2vh",
+            }}
+        >
             <WorkAppBar
                 settingsCallback={menuSettingsCallback}
                 completed={completed}
@@ -390,7 +398,7 @@ export default function MyWork() {
                     onEdit={handleEdit}
                     showDates={isMixingDates()}
                     warnOnLate={!completed}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", height: "800px" }}
                 />
                 <FormControlLabel
                     control={
@@ -411,6 +419,6 @@ export default function MyWork() {
                     doComplete={!completed}
                 />
             </Stack>
-        </div>
+        </Container>
     );
 }
