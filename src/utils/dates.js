@@ -2,10 +2,28 @@ function encodeDate(dt) {
     return dt.getMonth() + 1 + "-" + dt.getDate() + "-" + dt.getFullYear();
 }
 
+function stringToDate(dateS) {
+    // assumes mm-dd-yyyy
+    var dta = dateS.split("-");
+    if (dta.length != 3) {
+        throw new Error("stringToDate: invalid date format");
+    }
+
+    var month = parseInt(dta[0]);
+    var day = parseInt(dta[1]);
+    var year = parseInt(dta[2]);
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        throw new Error("stringToDate: invalid date format");
+    }
+
+    month -= 1; // months are zero-offset
+    return new Date(year, month, day, 0, 0, 0);
+}
+
 function addDays(dateS, nDays) {
     console.log("in addDays: ", nDays);
     console.log("dateS: ", dateS);
-    var startDate = new Date(dateS);
+    var startDate = stringToDate(dateS);
     console.log("startDate: ", startDate);
     var newDate = new Date();
     console.log("newDate: ", newDate);
@@ -17,21 +35,21 @@ function addDays(dateS, nDays) {
 }
 
 function addMonths(dateS, nMonths) {
-    var startDate = new Date(dateS);
+    var startDate = stringToDate(dateS);
     var newDate = new Date();
     newDate.setMonth(startDate.getMonth() + nMonths);
     return encodeDate(newDate);
 }
 
 function addYears(dateS, nYears) {
-    var startDate = new Date(dateS);
+    var startDate = stringToDate(dateS);
     var newDate = new Date();
     newDate.setFullYear(startDate.getFullYear() + nYears);
     return encodeDate(newDate);
 }
 
 function getDayOfWeek(dateS) {
-    var date = new Date(dateS);
+    var date = stringToDate(dateS);
     return date.toLocaleDateString("en-US", { weekday: "long" });
 }
 
