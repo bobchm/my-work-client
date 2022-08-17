@@ -162,7 +162,7 @@ export default function Edit() {
                     direction="column"
                     alignItems="flex-start"
                     justifyContent="flex-start"
-                    sx={{ maxHeight: "500px" }}
+                    //sx={{ maxHeight: "500px" }}
                     spacing={2}
                 >
                     <TextField
@@ -176,14 +176,6 @@ export default function Edit() {
                         date={new Date(form.due)}
                         label={"Due Date"}
                         callback={handleDateChange}
-                    />
-                    <TextField
-                        value={form.note}
-                        onChange={(e) => updateForm({ note: e.target.value })}
-                        label={"Note"}
-                        multiline
-                        fullWidth
-                        rows={3}
                     />
                     <Autocomplete
                         value={form.recurrence}
@@ -200,6 +192,14 @@ export default function Edit() {
                         list={taskLists}
                         callback={handleTaskListChange}
                         value={form.taskList}
+                    />
+                    <TextField
+                        value={form.note}
+                        onChange={(e) => updateForm({ note: e.target.value })}
+                        label={"Note"}
+                        multiline
+                        fullWidth
+                        rows={5}
                     />
                     <Stack
                         direction="row"

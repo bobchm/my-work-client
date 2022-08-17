@@ -43,6 +43,7 @@ export default function MyWork() {
     const [completed, setCompleted] = useState(initCompleted);
     const [taskList, setTaskList] = useState(initTaskList);
     const [taskLists, setTaskLists] = useState([]);
+    const [doUpdate, setDoUpdate] = useState(false);
 
     const navigate = useNavigate();
 
@@ -51,9 +52,15 @@ export default function MyWork() {
         saveDisplayContext();
         updateTaskLists();
         updateTasks();
+        setDoUpdate(false);
         return;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [numTasks, completed, due, taskList]);
+    }, [numTasks, completed, due, taskList, doUpdate]);
+
+    useEffect(() => {
+        const interval = setInterval(() => setDoUpdate(true), 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     function getParams() {
         var params = { completed: completed };
