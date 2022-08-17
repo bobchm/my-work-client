@@ -51,7 +51,6 @@ export default function MyWork() {
         saveDisplayContext();
         updateTaskLists();
         updateTasks();
-
         return;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [numTasks, completed, due, taskList]);

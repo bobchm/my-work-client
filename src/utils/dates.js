@@ -5,7 +5,7 @@ function encodeDate(dt) {
 function stringToDate(dateS) {
     // assumes mm-dd-yyyy
     var dta = dateS.split("-");
-    if (dta.length != 3) {
+    if (dta.length !== 3) {
         throw new Error("stringToDate: invalid date format");
     }
 
@@ -21,17 +21,10 @@ function stringToDate(dateS) {
 }
 
 function addDays(dateS, nDays) {
-    console.log("in addDays: ", nDays);
-    console.log("dateS: ", dateS);
     var startDate = stringToDate(dateS);
-    console.log("startDate: ", startDate);
     var newDate = new Date();
-    console.log("newDate: ", newDate);
     newDate.setDate(startDate.getDate() + nDays);
-    console.log("newDate after: ", newDate);
-    var encoded = encodeDate(newDate);
-    console.log("encoded: ", encoded);
-    return encoded;
+    return encodeDate(newDate);
 }
 
 function addMonths(dateS, nMonths) {
