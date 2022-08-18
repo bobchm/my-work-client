@@ -17,12 +17,11 @@ import TextPredictNew from "../components/TextPredictNew";
 import { encodeDate, stringToDate } from "../utils/dates";
 import { getRecurrenceOptions, getNoRecurrence } from "../utils/recurrences";
 import { getTask, getTaskLists, updateTask } from "../utils/dbaccess";
-import taskURL from "../utils/taskURL";
 
 export default function Edit() {
     const [form, setForm] = useState({
         item: "",
-        due: "",
+        due: null,
         note: "",
         taskList: "",
         recurrence: getNoRecurrence(),
@@ -43,6 +42,8 @@ export default function Edit() {
                 return;
             }
 
+            // celebrate weak typing
+            task.due = stringToDate(task.due);
             setForm(task);
         }
 
@@ -80,7 +81,7 @@ export default function Edit() {
         e.preventDefault();
         const editedTask = {
             item: form.item,
-            due: form.due,
+            due: encodeDate(form.due),
             note: form.note,
             taskList: form.taskList,
             recurrence: form.recurrence,
@@ -94,12 +95,10 @@ export default function Edit() {
 
     // callback for the date picker
     function handleDateChange(newValue) {
-        console.log("date type: ", typeof newValue);
-        updateForm({ due: encodeDate(newValue) });
+        updateForm({ due: newValue });
     }
 
     function handleTaskListChange(newValue) {
-        console.log(`handleTaskListChange: ${newValue}`);
         updateForm({ taskList: newValue });
     }
 
@@ -151,7 +150,7 @@ export default function Edit() {
                     />
                     <MyDatePicker
                         sx={{ width: "280px" }}
-                        date={new Date(form.due)}
+                        date={form.due}
                         label={"Due Date"}
                         callback={handleDateChange}
                     />

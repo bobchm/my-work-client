@@ -69,7 +69,8 @@ export default function MyWork() {
 
         switch (due) {
             case "Today":
-                sDate = getToday();
+                // for the Today filter, show today and overdue, so get all and then filter
+                sDate = "";
                 break;
             case "Tomorrow":
                 sDate = addDays(getToday(), 1);
@@ -80,10 +81,23 @@ export default function MyWork() {
         return sDate;
     }
 
+    function postProcessTasks(tasks) {
+        // if we're looking at "today's" tasks, we really want to include overdue as well
+        var newTasks = tasks;
+        if (due === "Today") {
+            var today = getToday();
+            newTasks = tasks.filter(
+                (task) => compareDates(task.due, today) <= 0
+            );
+        }
+        newTasks.map((task) => (task.checked = false));
+        return newTasks;
+    }
+
     // get all or filtered tasks from MongoDB
     async function updateTasks() {
         var tasks = await getAllTasks(completed, dateFromDue(), taskList);
-        tasks.map((task) => (task.checked = false));
+        tasks = postProcessTasks(tasks);
         sortAndSetTasks(tasks);
     }
 
@@ -148,7 +162,7 @@ export default function MyWork() {
 
     // add a new task
     function isMixingDates() {
-        return due === "All";
+        return due === "All" || due === "Today";
     }
 
     // they toggled one of the task checkboxes - enable/disable relevant buttons
