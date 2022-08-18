@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { isMobileOnly } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
@@ -27,7 +27,6 @@ import {
     updateForRecurrence,
 } from "../utils/recurrences";
 import { getCookie, setCookie } from "../utils/cookies";
-import taskURL from "../utils/taskURL";
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
@@ -59,10 +58,35 @@ export default function MyWork() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [numTasks, completed, due, taskList, doUpdate]);
 
-    useEffect(() => {
-        const interval = setInterval(() => setDoUpdate(true), 30000);
-        return () => clearInterval(interval);
-    }, []);
+    useInterval(() => {
+        // Your custom logic here
+        if (!anySelected) {
+            console.log("none selected");
+            setDoUpdate(true);
+        } else {
+            console.log("some selected");
+        }
+    }, 30000);
+
+    function useInterval(callback, delay) {
+        const savedCallback = useRef();
+
+        // Remember the latest function.
+        useEffect(() => {
+            savedCallback.current = callback;
+        }, [callback]);
+
+        // Set up the interval.
+        useEffect(() => {
+            function tick() {
+                savedCallback.current();
+            }
+            if (delay !== null) {
+                let id = setInterval(tick, delay);
+                return () => clearInterval(id);
+            }
+        }, [delay]);
+    }
 
     function dateFromDue() {
         var sDate;
@@ -175,6 +199,7 @@ export default function MyWork() {
                 any = true;
             }
         }
+        console.log("setAnySelected:", any);
         setAnySelected(any);
     }
 
@@ -215,13 +240,16 @@ export default function MyWork() {
         var count = 0;
         for (var i = 0; i < tasks.length; i++) {
             var task = tasks[i];
+            console.log("in delete");
             if (task.checked) {
+                console.log("checked");
                 await deleteTaskFromDB(task._id);
                 count += 1;
             }
         }
 
         setNumTasks(numTasks - count);
+        console.log("setAnySelected: false");
         setAnySelected(false);
     }
 
@@ -265,6 +293,7 @@ export default function MyWork() {
         for (var i = 0; i < tasks.length; i++) {
             var task = tasks[i];
             if (task.checked) {
+                console.log("toggling complete");
                 // toggle completion in the DB
                 await changeTaskInDB(task._id, "completed", !task.completed);
 
@@ -278,6 +307,7 @@ export default function MyWork() {
             }
         }
 
+        console.log("setAnySelected: false");
         setAnySelected(false);
         if (resetTasks) {
             setNumTasks(0);
@@ -301,6 +331,7 @@ export default function MyWork() {
             }
         }
 
+        console.log("setAnySelected: false");
         setAnySelected(false);
         if (isAny) {
             setNumTasks(0);
