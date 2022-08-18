@@ -14,10 +14,12 @@ import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
 import { addDays, getToday, compareDates } from "../utils/dates";
 import {
+    getAllTasks,
     addTaskToDB,
     deleteTaskFromDB,
     changeTaskInDB,
     deleteTaskFromDBQuery,
+    getTaskLists,
 } from "../utils/dbaccess";
 import {
     getNoRecurrence,
@@ -62,13 +64,8 @@ export default function MyWork() {
         return () => clearInterval(interval);
     }, []);
 
-    function getParams() {
-        var params = { completed: completed };
+    function dateFromDue() {
         var sDate;
-
-        if (taskList && taskList.length > 0) {
-            params = { ...params, taskList: taskList };
-        }
 
         switch (due) {
             case "Today":
@@ -80,37 +77,19 @@ export default function MyWork() {
             default:
                 sDate = "";
         }
-        if (sDate.length > 0) {
-            params = { ...params, due: sDate };
-        }
-
-        return "?" + new URLSearchParams(params);
+        return sDate;
     }
 
     // get all or filtered tasks from MongoDB
     async function updateTasks() {
-        const response = await fetch(taskURL("task/" + getParams()));
-
-        if (!response.ok) {
-            console.log(`An error occured: ${response.statusText}`);
-            return;
-        }
-
-        const tasks = await response.json();
+        var tasks = await getAllTasks(completed, dateFromDue(), taskList);
         tasks.map((task) => (task.checked = false));
         sortAndSetTasks(tasks);
     }
 
     // get the task lists used by the system
     async function updateTaskLists() {
-        const response = await fetch(taskURL("taskLists/"));
-
-        if (!response.ok) {
-            console.log(`An error occured: ${response.statusText}`);
-            return;
-        }
-
-        const lists = await response.json();
+        const lists = await getTaskLists();
         setTaskLists(lists);
     }
 
@@ -308,10 +287,10 @@ export default function MyWork() {
             }
         }
 
+        setAnySelected(false);
         if (isAny) {
             setNumTasks(0);
         }
-        setAnySelected(false);
     }
 
     function handlePostpone() {
@@ -409,7 +388,8 @@ export default function MyWork() {
                     onChecked={handleCheckboxToggle}
                     allowEdit={!completed}
                     onEdit={handleEdit}
-                    showDates={isMixingDates()}
+                    // showDates={isMixingDates()}
+                    showDates={true}
                     warnOnLate={!completed}
                     sx={{ width: "100%", height: "800px" }}
                 />

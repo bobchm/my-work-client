@@ -14,8 +14,9 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import MyDatePicker from "../components/MyDatePicker";
 import TextPredictNew from "../components/TextPredictNew";
-import { encodeDate } from "../utils/dates";
+import { encodeDate, stringToDate } from "../utils/dates";
 import { getRecurrenceOptions, getNoRecurrence } from "../utils/recurrences";
+import { getTask, getTaskLists, updateTask } from "../utils/dbaccess";
 import taskURL from "../utils/taskURL";
 
 export default function Edit() {
@@ -34,17 +35,8 @@ export default function Edit() {
     useEffect(() => {
         async function fetchData() {
             const id = params.id.toString();
-            const response = await fetch(
-                taskURL(`task/${params.id.toString()}`)
-            );
 
-            if (!response.ok) {
-                const message = `An error has occured: ${response.statusText}`;
-                window.alert(message);
-                return;
-            }
-
-            const task = await response.json();
+            const task = await getTask(id);
             if (!task) {
                 window.alert(`Task with id ${id} not found`);
                 navigate("/");
@@ -55,21 +47,13 @@ export default function Edit() {
         }
 
         // get the task lists used by the system
-        async function getTaskLists() {
-            const response = await fetch(taskURL("taskLists/"));
-
-            if (!response.ok) {
-                const message = `An error occured: ${response.statusText}`;
-                window.alert(message);
-                return;
-            }
-
-            const lists = await response.json();
+        async function getTheTaskLists() {
+            const lists = await getTaskLists();
             setTaskLists(lists);
         }
 
         fetchData();
-        getTaskLists();
+        getTheTaskLists();
 
         return;
     }, [params.id, navigate]);
@@ -104,19 +88,13 @@ export default function Edit() {
         };
 
         // This will send a post request to update the data in the database.
-        await fetch(taskURL(`update/${params.id}`), {
-            method: "POST",
-            body: JSON.stringify(editedTask),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
+        await updateTask(params.id, editedTask);
         navigate("/");
     }
 
     // callback for the date picker
     function handleDateChange(newValue) {
+        console.log("date type: ", typeof newValue);
         updateForm({ due: encodeDate(newValue) });
     }
 

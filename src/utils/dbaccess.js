@@ -1,5 +1,66 @@
 import taskURL from "./taskURL";
 
+function getParams(completed, due, taskList) {
+    var params = { completed: completed };
+
+    if (taskList && taskList.length > 0) {
+        params = { ...params, taskList: taskList };
+    }
+
+    if (due.length > 0) {
+        params = { ...params, due: due };
+    }
+
+    return "?" + new URLSearchParams(params);
+}
+
+// get all tasks
+async function getAllTasks(completed, due, taskList) {
+    const response = await fetch(
+        taskURL("task/" + getParams(completed, due, taskList))
+    );
+
+    if (!response.ok) {
+        console.log(`An error occured: ${response.statusText}`);
+        return null;
+    }
+
+    return await response.json();
+}
+
+async function getTask(id) {
+    const response = await fetch(taskURL(`task/${id}`));
+
+    if (!response.ok) {
+        const message = `An error has occured: ${response.statusText}`;
+        console.log(message);
+        return null;
+    }
+
+    return response.json();
+}
+
+async function getTaskLists() {
+    const response = await fetch(taskURL("taskLists/"));
+
+    if (!response.ok) {
+        console.log(`An error occured: ${response.statusText}`);
+        return null;
+    }
+
+    return await response.json();
+}
+
+async function updateTask(id, taskDef) {
+    await fetch(taskURL(`update/${id}`), {
+        method: "POST",
+        body: JSON.stringify(taskDef),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+}
+
 // add task to the database
 async function addTaskToDB(task) {
     await fetch(taskURL("task/add"), {
@@ -67,4 +128,13 @@ async function changeTaskInDB(id, key, value) {
     });
 }
 
-export { addTaskToDB, deleteTaskFromDB, changeTaskInDB, deleteTaskFromDBQuery };
+export {
+    getAllTasks,
+    getTask,
+    getTaskLists,
+    updateTask,
+    addTaskToDB,
+    deleteTaskFromDB,
+    changeTaskInDB,
+    deleteTaskFromDBQuery,
+};

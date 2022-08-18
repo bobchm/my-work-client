@@ -71,4 +71,5 @@ export {
     getToday,
     getDayOfWeek,
     compareDates,
+    stringToDate,
 };
