@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { createTheme } from "@mui/material/styles";
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
@@ -27,6 +28,7 @@ import {
     updateForRecurrence,
 } from "../utils/recurrences";
 import { getCookie, setCookie } from "../utils/cookies";
+import { AppBar } from "@mui/material";
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
@@ -61,10 +63,7 @@ export default function MyWork() {
     useInterval(() => {
         // Your custom logic here
         if (!anySelected) {
-            console.log("none selected");
             setDoUpdate(true);
-        } else {
-            console.log("some selected");
         }
     }, 30000);
 
@@ -199,7 +198,6 @@ export default function MyWork() {
                 any = true;
             }
         }
-        console.log("setAnySelected:", any);
         setAnySelected(any);
     }
 
@@ -240,16 +238,13 @@ export default function MyWork() {
         var count = 0;
         for (var i = 0; i < tasks.length; i++) {
             var task = tasks[i];
-            console.log("in delete");
             if (task.checked) {
-                console.log("checked");
                 await deleteTaskFromDB(task._id);
                 count += 1;
             }
         }
 
         setNumTasks(numTasks - count);
-        console.log("setAnySelected: false");
         setAnySelected(false);
     }
 
@@ -293,7 +288,6 @@ export default function MyWork() {
         for (var i = 0; i < tasks.length; i++) {
             var task = tasks[i];
             if (task.checked) {
-                console.log("toggling complete");
                 // toggle completion in the DB
                 await changeTaskInDB(task._id, "completed", !task.completed);
 
@@ -307,7 +301,6 @@ export default function MyWork() {
             }
         }
 
-        console.log("setAnySelected: false");
         setAnySelected(false);
         if (resetTasks) {
             setNumTasks(0);
@@ -331,7 +324,6 @@ export default function MyWork() {
             }
         }
 
-        console.log("setAnySelected: false");
         setAnySelected(false);
         if (isAny) {
             setNumTasks(0);
@@ -347,18 +339,33 @@ export default function MyWork() {
             setCompleted(settings.completed);
             setDue(settings.due);
             setTaskList(settings.taskList);
-            console.log("Task List: ", settings.taskList);
         }
+    }
+
+    var oWidth;
+    var oHeight;
+    var marginTop;
+    const defaultTheme = createTheme();
+
+    if (isMobileOnly) {
+        oWidth = "100vw";
+        oHeight = `calc(100vh - ${defaultTheme.mixins.toolbar.minHeight}px)`;
+        marginTop = "0vh";
+    } else {
+        oWidth = "80vw";
+        oHeight = "80vh";
+        marginTop = "2vh";
     }
 
     // render
     return (
         <Container
             className="outerDiv"
+            disableGutters
             sx={{
-                width: "80vw",
-                height: "80vh",
-                marginTop: "2vh",
+                width: oWidth,
+                height: oHeight,
+                marginTop: marginTop,
             }}
         >
             <WorkAppBar
