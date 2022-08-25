@@ -108,17 +108,15 @@ export default function Edit() {
     // This following section will display the form that takes input from the user to update the data.
     return (
         <Container
+            disableGutters
             sx={{
                 width: windowSz.outerWidth,
                 height: windowSz.outerHeight,
                 marginTop: windowSz.marginTop,
             }}
         >
-            <Box sx={{ flexGrow: 1, borderRadius: "10px" }}>
-                <AppBar
-                    position="static"
-                    sx={{ borderRadius: "10px 10px 0px 0px" }}
-                >
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
                     <Toolbar>
                         <Typography
                             variant="h6"
@@ -175,6 +173,7 @@ export default function Edit() {
                     />
                     <TextField
                         value={form.note}
+                        sx={{ height: "100%" }}
                         onChange={(e) => updateForm({ note: e.target.value })}
                         label={"Note"}
                         multiline
