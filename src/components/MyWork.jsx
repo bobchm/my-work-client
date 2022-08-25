@@ -7,13 +7,13 @@ import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { createTheme } from "@mui/material/styles";
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
 import { addDays, getToday, compareDates } from "../utils/dates";
+import { getWindowSize } from "../utils/windowsz";
 import {
     getAllTasks,
     addTaskToDB,
@@ -342,20 +342,7 @@ export default function MyWork() {
         }
     }
 
-    var oWidth;
-    var oHeight;
-    var marginTop;
-    const defaultTheme = createTheme();
-
-    if (isMobileOnly) {
-        oWidth = "100vw";
-        oHeight = `calc(100vh - ${defaultTheme.mixins.toolbar.minHeight}px)`;
-        marginTop = "0vh";
-    } else {
-        oWidth = "80vw";
-        oHeight = "80vh";
-        marginTop = "2vh";
-    }
+    var windowSz = getWindowSize();
 
     // render
     return (
@@ -363,9 +350,9 @@ export default function MyWork() {
             className="outerDiv"
             disableGutters
             sx={{
-                width: oWidth,
-                height: oHeight,
-                marginTop: marginTop,
+                width: windowSz.outerWidth,
+                height: windowSz.outerHeight,
+                marginTop: windowSz.marginTop,
             }}
         >
             <WorkAppBar
