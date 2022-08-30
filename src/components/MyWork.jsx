@@ -61,7 +61,6 @@ export default function MyWork() {
     }, [numTasks, completed, due, taskList, doUpdate]);
 
     useInterval(() => {
-        // Your custom logic here
         if (!anySelected) {
             setDoUpdate(true);
         }
@@ -92,8 +91,13 @@ export default function MyWork() {
 
         switch (due) {
             case "Today":
-                // for the Today filter, show today and overdue, so get all and then filter
-                sDate = "";
+                // for the Today Incomplete filter, show today and overdue, so get all and then filter
+                // If Today and Complete, just show Today
+                if (completed) {
+                    sDate = getToday();
+                } else {
+                    sDate = "";
+                }
                 break;
             case "Tomorrow":
                 sDate = addDays(getToday(), 1);
@@ -107,7 +111,7 @@ export default function MyWork() {
     function postProcessTasks(tasks) {
         // if we're looking at "today's" tasks, we really want to include overdue as well
         var newTasks = tasks;
-        if (due === "Today") {
+        if (due === "Today" && !completed) {
             var today = getToday();
             newTasks = tasks.filter(
                 (task) => compareDates(task.due, today) <= 0
