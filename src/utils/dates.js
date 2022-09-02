@@ -51,13 +51,21 @@ function getToday() {
 }
 
 function compareDates(d1, d2) {
-    const [month1, date1, year1] = d1.split("-");
-    const [month2, date2, year2] = d2.split("-");
+    const [smonth1, sdate1, syear1] = d1.split("-");
+    const [smonth2, sdate2, syear2] = d2.split("-");
 
+    var year1 = parseInt(syear1);
+    var year2 = parseInt(syear2);
     if (year1 < year2) return -1;
     if (year1 > year2) return 1;
+
+    var month1 = parseInt(smonth1);
+    var month2 = parseInt(smonth2);
     if (month1 < month2) return -1;
     if (month1 > month2) return 1;
+
+    var date1 = parseInt(sdate1);
+    var date2 = parseInt(sdate2);
     if (date1 < date2) return -1;
     if (date1 > date2) return 1;
     return 0;
