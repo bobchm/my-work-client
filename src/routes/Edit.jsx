@@ -15,6 +15,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import MyDatePicker from "../components/MyDatePicker";
 import TextPredictNew from "../components/TextPredictNew";
 import { encodeDate, stringToDate } from "../utils/dates";
+import { getWindowSize } from "../utils/windowsz";
 import { getRecurrenceOptions, getNoRecurrence } from "../utils/recurrences";
 import { getTask, getTaskLists, updateTask } from "../utils/dbaccess";
 
@@ -102,20 +103,20 @@ export default function Edit() {
         updateForm({ taskList: newValue });
     }
 
+    var windowSz = getWindowSize();
+
     // This following section will display the form that takes input from the user to update the data.
     return (
         <Container
+            disableGutters
             sx={{
-                width: "80vw",
-                height: "80vh",
-                marginTop: "2vh",
+                width: windowSz.outerWidth,
+                height: windowSz.outerHeight,
+                marginTop: windowSz.marginTop,
             }}
         >
-            <Box sx={{ flexGrow: 1, borderRadius: "10px" }}>
-                <AppBar
-                    position="static"
-                    sx={{ borderRadius: "10px 10px 0px 0px" }}
-                >
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
                     <Toolbar>
                         <Typography
                             variant="h6"
@@ -172,6 +173,7 @@ export default function Edit() {
                     />
                     <TextField
                         value={form.note}
+                        sx={{ height: "100%" }}
                         onChange={(e) => updateForm({ note: e.target.value })}
                         label={"Note"}
                         multiline

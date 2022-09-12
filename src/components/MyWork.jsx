@@ -7,13 +7,13 @@ import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { createTheme } from "@mui/material/styles";
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
 import { addDays, getToday, compareDates } from "../utils/dates";
+import { getWindowSize } from "../utils/windowsz";
 import {
     getAllTasks,
     addTaskToDB,
@@ -61,7 +61,6 @@ export default function MyWork() {
     }, [numTasks, completed, due, taskList, doUpdate]);
 
     useInterval(() => {
-        // Your custom logic here
         if (!anySelected) {
             setDoUpdate(true);
         }
@@ -92,8 +91,13 @@ export default function MyWork() {
 
         switch (due) {
             case "Today":
-                // for the Today filter, show today and overdue, so get all and then filter
-                sDate = "";
+                // for the Today Incomplete filter, show today and overdue, so get all and then filter
+                // If Today and Complete, just show Today
+                if (completed) {
+                    sDate = getToday();
+                } else {
+                    sDate = "";
+                }
                 break;
             case "Tomorrow":
                 sDate = addDays(getToday(), 1);
@@ -107,7 +111,7 @@ export default function MyWork() {
     function postProcessTasks(tasks) {
         // if we're looking at "today's" tasks, we really want to include overdue as well
         var newTasks = tasks;
-        if (due === "Today") {
+        if (due === "Today" && !completed) {
             var today = getToday();
             newTasks = tasks.filter(
                 (task) => compareDates(task.due, today) <= 0
@@ -342,20 +346,7 @@ export default function MyWork() {
         }
     }
 
-    var oWidth;
-    var oHeight;
-    var marginTop;
-    const defaultTheme = createTheme();
-
-    if (isMobileOnly) {
-        oWidth = "100vw";
-        oHeight = `calc(100vh - ${defaultTheme.mixins.toolbar.minHeight}px)`;
-        marginTop = "0vh";
-    } else {
-        oWidth = "80vw";
-        oHeight = "80vh";
-        marginTop = "2vh";
-    }
+    var windowSz = getWindowSize();
 
     // render
     return (
@@ -363,9 +354,9 @@ export default function MyWork() {
             className="outerDiv"
             disableGutters
             sx={{
-                width: oWidth,
-                height: oHeight,
-                marginTop: marginTop,
+                width: windowSz.outerWidth,
+                height: windowSz.outerHeight,
+                marginTop: windowSz.marginTop,
             }}
         >
             <WorkAppBar
