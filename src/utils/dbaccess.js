@@ -22,7 +22,7 @@ async function getAllTasks(completed, due, taskList) {
 
     if (!response.ok) {
         console.log(`An error occured: ${response.statusText}`);
-        return null;
+        return [];
     }
 
     return await response.json();
@@ -45,7 +45,7 @@ async function getTaskLists() {
 
     if (!response.ok) {
         console.log(`An error occured: ${response.statusText}`);
-        return null;
+        return [];
     }
 
     return await response.json();
