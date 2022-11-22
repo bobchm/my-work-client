@@ -365,7 +365,7 @@ export default function MyWork() {
                 due={due}
                 taskList={taskList}
                 taskLists={taskLists}
-                title="My Worky"
+                title="My Work"
             />
             <Stack
                 className="container"
