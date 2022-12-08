@@ -21,8 +21,7 @@ async function getAllTasks(completed, due, taskList) {
     );
 
     if (!response.ok) {
-        console.log(`An error occured: ${response.statusText}`);
-        return [];
+        throw new Error(`An error occured: ${response.statusText}`);
     }
 
     return await response.json();
@@ -32,9 +31,7 @@ async function getTask(id) {
     const response = await fetch(taskURL(`task/${id}`));
 
     if (!response.ok) {
-        const message = `An error has occured: ${response.statusText}`;
-        console.log(message);
-        return null;
+        throw new Error(`An error has occured: ${response.statusText}`);
     }
 
     return response.json();
@@ -44,8 +41,7 @@ async function getTaskLists() {
     const response = await fetch(taskURL("taskLists/"));
 
     if (!response.ok) {
-        console.log(`An error occured: ${response.statusText}`);
-        return [];
+        throw new Error(`An error occured: ${response.statusText}`);
     }
 
     return await response.json();

@@ -28,7 +28,9 @@ import {
     updateForRecurrence,
 } from "../utils/recurrences";
 import { getCookie, setCookie } from "../utils/cookies";
-import { AppBar } from "@mui/material";
+
+const ShortResetInterval = 5000;
+const LongResetInterval = 30000;
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
@@ -47,16 +49,33 @@ export default function MyWork() {
     const [taskList, setTaskList] = useState(initTaskList);
     const [taskLists, setTaskLists] = useState([]);
     const [doUpdate, setDoUpdate] = useState(false);
+    const [resetInterval, setResetInterval] = useState(LongResetInterval);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     // This fetches the tasks from the database.
     useEffect(() => {
+        async function updateEverything() {
+            try {
+                await updateTaskLists();
+                await updateTasks();
+                setLoading(false);
+                setResetInterval(LongResetInterval);
+            } catch (error) {
+                // most likely cause here is that the database hasn't spun up
+                setTasks([]);
+                setNumTasks(0);
+                setTaskLists([]);
+                setLoading(true);
+                setResetInterval(ShortResetInterval);
+            }
+        }
+
         saveDisplayContext();
-        updateTaskLists();
-        updateTasks();
         setDoUpdate(false);
-        return;
+        updateEverything();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [numTasks, completed, due, taskList, doUpdate]);
 
@@ -64,7 +83,7 @@ export default function MyWork() {
         if (!anySelected) {
             setDoUpdate(true);
         }
-    }, 30000);
+    }, resetInterval);
 
     function useInterval(callback, delay) {
         const savedCallback = useRef();
@@ -434,6 +453,7 @@ export default function MyWork() {
                     // showDates={isMixingDates()}
                     showDates={true}
                     warnOnLate={!completed}
+                    loading={loading}
                     sx={{ width: "100%", height: "800px" }}
                 />
                 {!isMobileOnly && (

@@ -7,7 +7,6 @@ export function getWindowSize() {
     var marginTop;
     const defaultTheme = createTheme();
 
-    console.log("gws isMobile: ", isMobileOnly);
     if (isMobileOnly) {
         oWidth = "100vw";
         oHeight = `calc(100vh - ${defaultTheme.mixins.toolbar.minHeight}px)`;
