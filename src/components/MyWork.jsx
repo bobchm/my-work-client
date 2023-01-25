@@ -29,7 +29,7 @@ import {
 } from "../utils/recurrences";
 import { getCookie, setCookie } from "../utils/cookies";
 
-const ShortResetInterval = 5000;
+const ShortResetInterval = 2000;
 const LongResetInterval = 30000;
 
 export default function MyWork() {
