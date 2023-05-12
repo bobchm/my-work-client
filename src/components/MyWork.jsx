@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
@@ -20,6 +21,7 @@ import {
     deleteTaskFromDB,
     changeTaskInDB,
     deleteTaskFromDBQuery,
+    deleteTasksFromDBQuery,
     getTaskLists,
 } from "../utils/dbaccess";
 import {
@@ -271,6 +273,17 @@ export default function MyWork() {
         setAnySelected(false);
     }
 
+    async function onClearCompleted(e) {
+        e.preventDefault();
+        var qry = {
+            completed: true,
+        };
+        await deleteTasksFromDBQuery(qry);
+
+        setNumTasks(0);
+        setAnySelected(false);
+    }
+
     // handler for the delete button
     function handleDelete() {
         doDelete();
@@ -457,17 +470,32 @@ export default function MyWork() {
                     sx={{ width: "100%", height: "800px" }}
                 />
                 {!isMobileOnly && (
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={completed}
-                                onChange={(event) =>
-                                    setCompleted(event.target.checked)
-                                }
-                            />
-                        }
-                        label="Completed"
-                    />
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        sx={{ width: "100%" }}
+                    >
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={completed}
+                                    onChange={(event) =>
+                                        setCompleted(event.target.checked)
+                                    }
+                                />
+                            }
+                            label="Completed"
+                        />
+                        {completed && (
+                            <Button
+                                onClick={(event) => onClearCompleted(event)}
+                                variant="contained"
+                            >
+                                Clear Completed
+                            </Button>
+                        )}
+                    </Stack>
                 )}
                 <ActionRow
                     onDelete={handleDelete}

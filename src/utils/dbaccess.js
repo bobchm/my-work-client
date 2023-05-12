@@ -94,6 +94,25 @@ async function deleteTaskFromDBQuery(qry) {
     }
 }
 
+// delete all tasks matching query from MongoDB really slowly - should add a server-side function to support
+async function deleteTasksFromDBQuery(qry) {
+    var qry_S = "?" + new URLSearchParams(qry);
+    const response = await fetch(taskURL("task/" + qry_S));
+
+    if (!response.ok) {
+        console.log(`An error occured: ${response.statusText}`);
+        return;
+    }
+
+    const tasks = await response.json();
+    if (tasks && tasks.length > 0) {
+        for (var i = 0; i < tasks.length; i++) {
+            await deleteTaskFromDB(tasks[i]._id);
+            console.log(`${i + 1} of ${tasks.length}`);
+        }
+    }
+}
+
 // handler for the task completion button
 async function changeTaskInDB(id, key, value) {
     // get the task from the database
@@ -133,4 +152,5 @@ export {
     deleteTaskFromDB,
     changeTaskInDB,
     deleteTaskFromDBQuery,
+    deleteTasksFromDBQuery,
 };
